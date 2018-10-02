@@ -9,6 +9,16 @@ CAR_SPECS = {
 }
 
 
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(
+                Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
 class Car:
     def __init__(self, model, specs):
         self.__model = model
@@ -29,7 +39,7 @@ class Weather:
         return randint(0, self.__wind_speed)
 
 
-class Competition:
+class Competition(metaclass=Singleton):
     def __init__(self, distance=10000):
         self.__distance = distance
 
