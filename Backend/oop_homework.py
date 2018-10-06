@@ -1,4 +1,6 @@
+#!/usr/bin/python3
 from random import randint
+import sys
 
 CAR_SPECS = {
     'ferrary': {"max_speed": 340, "drag_coef": 0.324, "time_to_max": 26},
@@ -9,17 +11,8 @@ CAR_SPECS = {
 }
 
 
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(
-                Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
 class Car:
+
     def __init__(self, model, specs):
         self.__model = model
         self.__specs = specs
@@ -32,6 +25,7 @@ class Car:
 
 
 class Weather:
+
     def __init__(self, wind_speed=20):
         self.__wind_speed = wind_speed
 
@@ -39,7 +33,14 @@ class Weather:
         return randint(0, self.__wind_speed)
 
 
-class Competition(metaclass=Singleton):
+class Competition:
+    instance = None
+
+    def __new__(cls, distance):
+        if cls.instance is None:
+            cls.instance = super(cls).__new__(cls)
+        return cls.instance
+
     def __init__(self, distance=10000):
         self.__distance = distance
 
@@ -61,10 +62,12 @@ class Competition(metaclass=Singleton):
 
                 competitor_time += float(1) / _speed
 
-            print ("Car <%s> result: %f" % (competitor_name.get_model(), competitor_time))
+            print ("Car <%s> result: %f" %
+                   (competitor_name.get_model(), competitor_time))
 
 
-competition = Competition()
+competition = Competition(1000)
+dd = Competition(2000)
 weather = Weather()
 
 ferrary = Car('ferrary', CAR_SPECS['ferrary'])
@@ -75,5 +78,11 @@ sx4 = Car('sx4', CAR_SPECS['sx4'])
 
 competitors = (ferrary, bugatti, toyota, lada, sx4)
 competition.start(competitors, weather)
+# print(competition.__dict__)
+# print(weather.__dict__)
+# print(ferrary.__dict__)
+# print(bugatti.__dict__)
+# print(competition)
+# print(dd)
 
-
+# print(sys.version)
