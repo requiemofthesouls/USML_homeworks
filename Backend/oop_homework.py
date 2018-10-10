@@ -12,10 +12,11 @@ CAR_SPECS = {
 
 
 class Car:
-
     def __init__(self, model, specs):
         self.__model = model
         self.__specs = specs
+        self.__time = None
+        self.__distance = None
 
     def get_model(self):
         return self.__model
@@ -23,8 +24,20 @@ class Car:
     def get_specs(self):
         return self.__specs
 
+    def get_result_time(self):
+        return self.__time
+
+    def get_result_distance(self):
+        return self.__distance
+
+    def set_result(self, time, distance):
+        self.__time = time
+        self.__distance = distance
+
 
 class Weather:
+    """ Можно попробовать применить шаблон Observer
+    Наблюдатель будет уведомлять о изменении погоды """
 
     def __init__(self, wind_speed=20):
         self.__wind_speed = wind_speed
@@ -33,12 +46,12 @@ class Weather:
         return randint(0, self.__wind_speed)
 
 
-class Competition:
+class Competition:  # Singleton and chain of responsobillity patterns
     instance = None
 
-    def __new__(cls, distance):
+    def __new__(cls, arg):
         if cls.instance is None:
-            cls.instance = super(cls).__new__(cls)
+            cls.instance = super(Competition, cls).__new__(cls)
         return cls.instance
 
     def __init__(self, distance=10000):
@@ -61,13 +74,32 @@ class Competition:
                         _speed -= (car['drag_coef'] * _wind_speed)
 
                 competitor_time += float(1) / _speed
+            if competitor_name.get_result_time():
+                print(f'Car <{competitor_name.get_model()}> previous result: {competitor_name.get_result_time()}, distance {competitor_name.get_result_distance()}m')
+                competitor_name.set_result(competitor_time, self.__distance)
+            else:
+                competitor_name.set_result(competitor_time, self.__distance)
+            print(f'Car <{competitor_name.get_model()}> result: {competitor_time}, distance {self.__distance}m')
 
-            print ("Car <%s> result: %f" %
-                   (competitor_name.get_model(), competitor_time))
+
+class CompetitionGiver:
+    """ Цепочка обязанностей """
+
+    def __init__(self):
+        super(CompetitionGiver, self).__init__()
+        self.__competitors = []
+
+    def add_competitors(self, competitor):
+        self.__competitors.append(competitor)
+
+    def get_competitors(self):
+        return self.__competitors
+
+    def handle_competition(self):
+        competition.start(self.get_competitors(), weather)
 
 
-competition = Competition(1000)
-dd = Competition(2000)
+competition = Competition(10000)
 weather = Weather()
 
 ferrary = Car('ferrary', CAR_SPECS['ferrary'])
@@ -76,13 +108,13 @@ toyota = Car('toyota', CAR_SPECS['toyota'])
 lada = Car('lada', CAR_SPECS['lada'])
 sx4 = Car('sx4', CAR_SPECS['sx4'])
 
-competitors = (ferrary, bugatti, toyota, lada, sx4)
-competition.start(competitors, weather)
-# print(competition.__dict__)
-# print(weather.__dict__)
-# print(ferrary.__dict__)
-# print(bugatti.__dict__)
-# print(competition)
-# print(dd)
 
-# print(sys.version)
+competitors = (ferrary, bugatti, toyota, lada, sx4)
+competition_giver = CompetitionGiver()
+
+for competitor in competitors:
+    competition_giver.add_competitors(competitor)
+
+print(competition_giver.handle_competition())
+competition = Competition(5000)
+print(competition_giver.handle_competition())
