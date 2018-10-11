@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 from random import randint
 import sys
 
@@ -75,7 +76,8 @@ class Competition:  # Singleton and chain of responsobillity patterns
 
                 competitor_time += float(1) / _speed
             if competitor_name.get_result_time():
-                print(f'Car <{competitor_name.get_model()}> previous result: {competitor_name.get_result_time()}, distance {competitor_name.get_result_distance()}m')
+                print(f'Car <{competitor_name.get_model()}> '
+                      f'previous result: {competitor_name.get_result_time()}, distance {competitor_name.get_result_distance()}m')
                 competitor_name.set_result(competitor_time, self.__distance)
             else:
                 competitor_name.set_result(competitor_time, self.__distance)
