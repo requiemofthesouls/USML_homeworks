@@ -1,8 +1,21 @@
 from unittest import TestCase
-from USML_homeworks.Backend.Testing.gcd import gcd
+import unittest2
+import doctest
+import pytest
+import tox
+import hypothesis
+# from USML_homeworks.Backend.Testing.gcd import gcd
+from gcd import gcd
 
 
 class TestGcd(TestCase):
+    def test_m_or_n_less_than_0(self):
+        for i in range(-1, -1001, -1):
+            with self.assertRaises(ValueError):
+                gcd(i, i - 20)
+                gcd(i, 4)
+                gcd(4, i)
+
     def test_m_is_null(self):
         for i in range(1, 1001):
             self.assertEqual(gcd(0, i), i)
@@ -31,6 +44,3 @@ class TestGcd(TestCase):
     # def test_m_is_odd_and_n_is_even(self):
     #     for i in range(2, 1001, 2):
     #         self.assertEqual(gcd(i - 1, i + i), 1)
-
-
-
