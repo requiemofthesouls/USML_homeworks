@@ -1,0 +1,17 @@
+atomicwrites==1.2.1
+attrs==18.2.0
+filelock==3.0.9
+hypothesis==3.78.0
+linecache2==1.0.0
+mock==2.0.0
+more-itertools==4.3.0
+pbr==5.0.0
+pluggy==0.8.0
+py==1.7.0
+pytest==3.9.1
+six==1.11.0
+toml==0.10.0
+tox==3.5.2
+traceback2==1.4.0
+unittest2==1.1.0
+virtualenv==16.0.0
