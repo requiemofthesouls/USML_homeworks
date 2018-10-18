@@ -43,3 +43,5 @@ my_obj.call_original_method()
 MyClass.x = 32
 print(MyClass.x)
 
+my_obj.x = 20
+print(my_obj.x)

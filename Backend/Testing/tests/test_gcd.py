@@ -4,8 +4,8 @@ import doctest
 import pytest
 import tox
 import hypothesis
-# from USML_homeworks.Backend.Testing.gcd import gcd
-from gcd import gcd
+from USML_homeworks.Backend.Testing.gcd import gcd
+# from gcd import gcd
 
 
 class TestGcd(TestCase):
@@ -41,6 +41,3 @@ class TestGcd(TestCase):
             self.assertTrue(gcd(i, i + (i - 1)) % 2 == 1)
             self.assertTrue(gcd(i + i, i - 1) % 2 == 1)
 
-    # def test_m_is_odd_and_n_is_even(self):
-    #     for i in range(2, 1001, 2):
-    #         self.assertEqual(gcd(i - 1, i + i), 1)
