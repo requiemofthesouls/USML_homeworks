@@ -41,8 +41,35 @@ class CourseParsing:
         else:
             return None
 
-    def get_course_description(self):
-        pass
+    def get_course_descriptor(self):
+        if self.get_course_title():
+            desc = self.bsobj.find('p', class_='course-index__short-desc')
+            try:
+                return desc.text
+            except AttributeError:
+                return None
+        else:
+            return None
+
+    def get_course_organisation(self):
+        if self.get_course_title():
+            desc = self.bsobj.find('span', class_='user-avatar__name')
+            try:
+                return desc.text
+            except AttributeError:
+                return None
+        else:
+            return None
+
+    def get_course_teachers(self):
+        if self.get_course_title():
+            teachers_block = self.bsobj.find('ol', class_='course-index__authors-list')
+            try:
+                teachers_block = teachers_block.find_all('a')
+                teachers = [teacher.string for teacher in teachers_block]
+                return teachers
+            except AttributeError:
+                return None
 
 
 class StepikCourse:
@@ -51,13 +78,19 @@ class StepikCourse:
         self._id = course_id
         self._title = current_course.get_course_title()
         self._rating = current_course.get_course_rating()
-        # self._description = CourseParsing.get_course_description(course_id)
+        self._description = current_course.get_course_descriptor()
+        self._organisator = current_course.get_course_organisation()
+        self._teachers = current_course.get_course_teachers()
+
+    def __str__(self):
+        msg = f'ID: {self._id}, Title: {self._title}, Rating: {self._rating}, Organisator: {self._organisator}, Teachers: {self._teachers}'
+        return msg
 
 
 def main():
     for i in range(1, 100):
         c = StepikCourse(i)
-        print(c._id, c._title, c._rating)
+        print(c)
 
 
 if __name__ == '__main__':
