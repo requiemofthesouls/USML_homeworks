@@ -41,7 +41,7 @@ class CourseParsing:
         else:
             return None
 
-    def get_course_descriptor(self):
+    def get_course_description(self):
         if self.get_course_title():
             desc = self.bsobj.find('p', class_='course-index__short-desc')
             try:
@@ -78,19 +78,62 @@ class StepikCourse:
         self._id = course_id
         self._title = current_course.get_course_title()
         self._rating = current_course.get_course_rating()
-        self._description = current_course.get_course_descriptor()
+        self._description = current_course.get_course_description()
         self._organisator = current_course.get_course_organisation()
         self._teachers = current_course.get_course_teachers()
 
+    def get_id(self):
+        return self._id
+
+    def get_title(self):
+        if self._title:
+            return self._title.replace('\n', '')
+        else:
+            return None
+
+    def get_rating(self):
+        return self._rating
+
+    def get_description(self):
+        if self._description:
+            return self._description.replace('\n', '')
+        else:
+            return None
+
+    def get_organisator(self):
+        return self._organisator
+
+    def get_teachers(self):
+        if self._teachers:
+            return ', '.join(self._teachers)
+        else:
+            return None
+
     def __str__(self):
-        msg = f'ID: {self._id}, Title: {self._title}, Rating: {self._rating}, Organisator: {self._organisator}, Teachers: {self._teachers}'
+        msg = f'ID: {self.get_id()}, ' \
+              f'Title: {self.get_title()}, ' \
+              f'Rating: {self.get_rating()}, ' \
+              f'Organisator: {self.get_organisator()}, ' \
+              f'Teachers: {self.get_teachers()}'
         return msg
 
 
 def main():
-    for i in range(1, 100):
-        c = StepikCourse(i)
-        print(c)
+    with open('courses.csv', 'w') as csv:
+        csv.write('id; Название курса; Рейтинг; Описание; Организатор; Преподаватели' + '\n')
+        for i in range(1, 10000):
+            course = StepikCourse(i)
+            if course.get_title():
+                print(course)
+                line = f'{course.get_id()}; ' \
+                       f'{course.get_title()}; ' \
+                       f'{course.get_rating()}; ' \
+                       f'{course.get_description()}; ' \
+                       f'{course.get_organisator()}; ' \
+                       f'{course.get_teachers()} \n'
+                csv.write(line)
+            else:
+                continue
 
 
 if __name__ == '__main__':
