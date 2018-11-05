@@ -21,7 +21,7 @@ class CourseParsing:
         return BeautifulSoup(rsp.text, features="lxml")
 
     def is_an_error(self):
-        course_existing = self.bsobj.find('div', {'class': 'course-preview'})
+        course_existing = self.bsobj.find('div', class_='course-preview')
         return False if course_existing else True
 
     def get_course_title(self):
@@ -96,7 +96,8 @@ class StepikCourse:
 
     def get_description(self):
         if self._description:
-            return self._description.replace('\n', '')
+            desc = self._description.replace(';', ',')
+            return desc.replace('\n', '')
         else:
             return None
 
@@ -123,8 +124,9 @@ def main():
         csv.write('id; Название курса; Рейтинг; Описание; Организатор; Преподаватели' + '\n')
         for i in range(1, 10000):
             course = StepikCourse(i)
+            print(course)
             if course.get_title():
-                print(course)
+                print('Writing' + str(course.get_id()))
                 line = f'{course.get_id()}; ' \
                        f'{course.get_title()}; ' \
                        f'{course.get_rating()}; ' \
