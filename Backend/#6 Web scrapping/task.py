@@ -121,7 +121,7 @@ class StepikCourse:
 
 def main():
     with open('courses.csv', 'w') as csv:
-        csv.write('id; Название курса; Рейтинг; Описание; Организатор; Преподаватели' + '\n')
+        csv.write('id;Title;Rating;Descriprion;Organisator;Teachers' + '\n')
         for i in range(1, 10000):
             course = StepikCourse(i)
             print(course)

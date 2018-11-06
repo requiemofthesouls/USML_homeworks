@@ -1,4 +1,4 @@
-id; Название курса; Рейтинг; Описание; Организатор; Преподаватели
+id;title;rating;description;organisator;teachers
 1;   Epic Guide to Stepik — Stepik; None; None; Nikolay Vyahhi; None 
 2;   Bioinformatics Algorithms — Stepik; None; Explore the power of computing in modern biology and apply existing software tools to find recurring biological motifs within genes that are responsible for helping Mycobacterium tuberculosis go "dormant" within a host for many years before causing an active infection.Interactive preview of Bioinformatics Algorithms: An Active Learning Approach.© 2014 by Phillip Compeau and Pavel Pevzner. All rights reserved.; Phillip Compeau; None 
 5;   Python for Beginners — Stepik; 4.9; None; None; None 
