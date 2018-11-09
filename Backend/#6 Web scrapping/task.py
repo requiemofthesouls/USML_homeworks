@@ -15,7 +15,7 @@ class CourseParsing:
     @staticmethod
     def _grab_course(course_id, headers):
         try:
-            rsp = requests.get(f'https://stepik.org/course/{course_id}', headers=headers)
+            rsp = requests.get(URL+str(course_id), headers=headers)
         except requests.exceptions.HTTPError as e:
             raise e
         return BeautifulSoup(rsp.text, features="lxml")
