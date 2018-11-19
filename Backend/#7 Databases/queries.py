@@ -13,6 +13,16 @@ import pymongo
 Для каждого запроса посчитать время выполнения и записать в сводную таблицу.
 """
 
+""" 
+Результаты PostgreSQL
+0. execute_query 0.4045290946960449
+1. execute_query 0.0013396739959716797
+2. execute_query 2.4090802669525146
+3. execute_query 7.0151917934417725
+4. execute_query 2.9786691665649414
+5. execute_query 1.2459440231323242
+"""
+
 conn = psycopg2.connect(dbname='taxi_db', user='postgres', host='localhost', password=1)
 cursor = conn.cursor()
 
@@ -29,7 +39,7 @@ def benchmark(func):
     return wrapper
 
 
-query1 = """
+query0 = """
             SELECT *
             FROM trip_data
             WHERE 
@@ -41,9 +51,9 @@ query1 = """
                 '2018-01-01 02:00:00.000000'
          """
 
-query2 = "SELECT * FROM trip_data LIMIT 20 OFFSET 10"
+query1 = "SELECT * FROM trip_data LIMIT 20 OFFSET 10"
 
-query3 = """
+query2 = """
             SELECT StartTrips.zone, StartRides, EndRides
             FROM (SELECT DISTINCT taxi_zone.zone, 
                     COUNT(trip_data.pulocationid) AS StartRides
@@ -63,7 +73,7 @@ query3 = """
             WHERE StartTrips.zone = EndTrips.zone
          """
 
-query4 = """
+query3 = """
             SELECT h.hour, COUNT(*) as current_hour_trips,
                    sum(count(*)*1.0) over() as total_trips,
                    cast(count(*)/(sum(count(*)*1.0) over()) * 100 as decimal(6, 1)) as avg
@@ -75,7 +85,7 @@ query4 = """
             ORDER BY avg
          """
 
-query5 = """
+query4 = """
              SELECT to_char(trip_data.tpep_pickup_datetime, 'DAY') AS DayGroup,
                 COUNT(*) as total_trips,
                 cast(count(*) / (sum(count(*) * 1.0) over ()) * 100 as decimal(6, 1)) as avg
@@ -84,13 +94,13 @@ query5 = """
              ORDER BY avg
          """
 
-query6 = """
+query5 = """
              SELECT trip_data.payment_type, COUNT(*)
              FROM trip_data
              GROUP BY trip_data.payment_type
          """
 
-queries = (query1, query2, query3, query4, query5, query6)
+queries = (query0, query1, query2, query3, query4, query5)
 
 
 @benchmark
@@ -98,18 +108,27 @@ def execute_query(query_):
     cursor.execute(query_)
 
 
-for i, query in enumerate(queries):
-    execute_query(query)
-    print(i)
+def check_postgres():
+    for i, query in enumerate(queries):
+        execute_query(query)
+        print(i)
+
 
 conn.close()
 
-""" 
-Результаты
-0. execute_query 0.4045290946960449
-1. execute_query 0.0013396739959716797
-2. execute_query 2.4090802669525146
-3. execute_query 7.0151917934417725
-4. execute_query 2.9786691665649414
-5. execute_query 1.2459440231323242
-"""
+client = pymongo.MongoClient('localhost', 27017)
+taxi_db = client.taxi_db
+
+
+@benchmark
+def execute_mongodb(expr):
+    expr
+
+query0_ = taxi_db.trip_data
+def check_mongodb():
+    pass
+
+
+if __name__ == '__main__':
+    # check_postgres()
+    check_mongodb()

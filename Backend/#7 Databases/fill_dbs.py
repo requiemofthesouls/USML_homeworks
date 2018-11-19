@@ -1,6 +1,10 @@
+from datetime import datetime
+from time import time
 import psycopg2
 import pymongo
 import csv
+
+__data__ = 'http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml'
 
 
 def fill_postgres():
@@ -60,22 +64,46 @@ def fill_postgres():
 
 
 def fill_mongodb():
+    t = time()
     client = pymongo.MongoClient('localhost', 27017)
     taxi_db = client.taxi_db
 
     with open('taxi_zone.csv') as f:
         taxi_zones = csv.DictReader(f)
         for row in taxi_zones:
+            row['LocationID'] = int(row['LocationID'])
             taxi_db['taxi_zones'].insert_one(row)
             print(row)
 
     with open('tripdata.csv') as f:
         trip_data = csv.DictReader(f)
         for row in trip_data:
+            # TODO: Marshmallow
+            row['VendorID'] = int(row['VendorID'])
+            row['tpep_pickup_datetime'] = \
+                datetime.strptime(row['tpep_pickup_datetime'], '%Y-%m-%d %H:%M:%S')
+            row['tpep_dropoff_datetime'] = \
+                datetime.strptime(row['tpep_dropoff_datetime'], '%Y-%m-%d %H:%M:%S')
+            row['passenger_count'] = int(row['passenger_count'])
+            row['trip_distance'] = float(row['trip_distance'])
+            row['RatecodeID'] = int(row['RatecodeID'])
+            row['PULocationID'] = int(row['PULocationID'])
+            row['DOLocationID'] = int(row['DOLocationID'])
+            row['payment_type'] = int(row['payment_type'])
+            row['payment_type'] = int(row['payment_type'])
+            row['fare_amount'] = float(row['fare_amount'])
+            row['extra'] = float(row['extra'])
+            row['mta_tax'] = float(row['mta_tax'])
+            row['tip_amount'] = float(row['tip_amount'])
+            row['tolls_amount'] = float(row['tolls_amount'])
+            row['improvement_surcharge'] = float(row['improvement_surcharge'])
+            row['total_amount'] = float(row['total_amount'])
+
             taxi_db['trip_data'].insert_one(row)
             print(row)
+    print(f'Total fill time {time() - t}s')  # Total fill time 3224.3s (53.7 minutes)
 
 
 if __name__ == '__main__':
-    fill_postgres()
+    # fill_postgres()
     fill_mongodb()
